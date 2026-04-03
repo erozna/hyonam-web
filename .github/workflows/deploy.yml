@@ -10,26 +10,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Copy slide images + CNAME to out/
+      - name: Copy assets to deploy folder
         run: |
-          cp -r public/slides/* out/ 2>/dev/null || true
-          echo "hyonam.com" > out/CNAME
+          mkdir -p deploy
+          cp index.html deploy/
+          cp script.js deploy/ 2>/dev/null || true
+          cp style.css deploy/ 2>/dev/null || true
+          cp -r public/slide_*.jpg deploy/ 2>/dev/null || true
+          cp public/도깨비마인드맵.png deploy/ 2>/dev/null || true
+          cp public/*.pdf deploy/ 2>/dev/null || true
+          echo "hyonam.com" > deploy/CNAME
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          publish_dir: ./deploy
           force_orphan: true
