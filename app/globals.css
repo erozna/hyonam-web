@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.hero-bg {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+    url("https://source.unsplash.com/random/1920x1080/?classical-guitar") center/cover
+      no-repeat;
+}
