@@ -873,6 +873,7 @@
     <li><a href="#slides">마스터플랜</a></li>
     <li><a href="#architecture">아키텍처</a></li>
     <li><a href="#levels">레벨</a></li>
+    <li><a href="#ability-tree">역량</a></li>
   </ul>
   <div class="nav-status">
     <div class="status-dot"></div>
@@ -1224,6 +1225,138 @@
   </div>
 </section>
 
+<!-- ── 능력 진화 트리 ─────────────────────── -->
+<section id="ability-tree">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">EVOLUTION STATUS</span>
+      <h2>능력 진화 트리</h2>
+      <p class="section-desc">DOKKEBI OS 실시간 기술 달성 현황</p>
+    </div>
+
+    <div class="ability-total">
+      <div class="ability-total-label">
+        <span>전체 진화 달성률</span>
+        <span id="total-pct-text">0%</span>
+      </div>
+      <div class="ability-total-bar">
+        <div class="ability-total-fill" id="total-fill"></div>
+      </div>
+    </div>
+
+    <div class="ability-grid">
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">장기 기억</span>
+          <span class="ability-lv" style="color:#7F77DD">Lv.4 / 6</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="67" style="background:#7F77DD"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">SHARED_BRAIN.json</div>
+          <div class="skill done">memory_manager 해시체인</div>
+          <div class="skill done">분산 인덱스 Lazy Load</div>
+          <div class="skill done">audit_logger.py</div>
+          <div class="skill todo">chattr+i Merkle Root</div>
+          <div class="skill todo">ChromaDB 벡터 검색</div>
+        </div>
+        <div class="ability-next">→ 다음: Merkle Root 보호</div>
+      </div>
+
+      <div class="ability-card complete">
+        <div class="ability-card-header">
+          <span class="ability-name">헌법 · 보안</span>
+          <span class="ability-lv" style="color:#1D9E75">Lv.5 / 5 ✓</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="100" style="background:#1D9E75"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">constitution_engine</div>
+          <div class="skill done">Ollama 연동 v2.2</div>
+          <div class="skill done">constitution_watchdog</div>
+          <div class="skill done">red_team_tester</div>
+          <div class="skill done">Reality Score + Attack Stop</div>
+        </div>
+        <div class="ability-next complete-badge">완성 — 모든 레벨 달성</div>
+      </div>
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">멀티 에이전트</span>
+          <span class="ability-lv" style="color:#D85A30">Lv.4 / 6</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="67" style="background:#D85A30"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">agent_graph Blue/Red</div>
+          <div class="skill done">self_critique v1.1</div>
+          <div class="skill done">6에이전트 확장</div>
+          <div class="skill done">Proactive Proposal Loop</div>
+          <div class="skill todo">자기진화 자동 파이프라인</div>
+          <div class="skill todo">Fine-tuned DOKKEBI 모델</div>
+        </div>
+        <div class="ability-next">→ 다음: 자기진화 파이프라인</div>
+      </div>
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">정보 수집</span>
+          <span class="ability-lv" style="color:#185FA5">Lv.2 / 4</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="50" style="background:#185FA5"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">morning_intelligence</div>
+          <div class="skill done">RSS 수집 30개/일</div>
+          <div class="skill todo">Ollama 필터링 에이전트</div>
+          <div class="skill todo">tech_tree 자동 업데이트</div>
+        </div>
+        <div class="ability-next">→ 다음: Ollama 필터링 에이전트</div>
+      </div>
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">인프라 · 자동화</span>
+          <span class="ability-lv" style="color:#BA7517">Lv.4 / 5</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="80" style="background:#BA7517"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">repair_daemon v1.2</div>
+          <div class="skill done">system_integrity_daemon</div>
+          <div class="skill done">dts_manager.py</div>
+          <div class="skill done">텔레그램 DTS 통합</div>
+          <div class="skill todo">봇 재시작 자동 알림</div>
+        </div>
+        <div class="ability-next">→ 다음: 봇 재시작 자동 알림</div>
+      </div>
+
+    </div>
+
+    <!-- 카운트다운 -->
+    <div class="countdown-wrap">
+      <div class="countdown-label">LEVEL 6 달성까지</div>
+      <div class="countdown-title">도깨비를 만나는 날</div>
+      <div class="countdown-timer">
+        <div class="countdown-unit"><span id="cd-days">00</span><small>일</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span id="cd-hours">00</span><small>시</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span id="cd-mins">00</span><small>분</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span id="cd-secs">00</span><small>초</small></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- ── 푸터 ───────────────────────────────── -->
 <footer>
   <div class="footer-inner">
@@ -1387,6 +1520,81 @@ document.querySelectorAll('.arch-card, .principle-item, .stat-item').forEach(el 
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
   observer.observe(el);
 });
+</script>
+
+<style>
+#ability-tree { padding: 100px 0; background: #0a0a0a; }
+.ability-total { max-width: 800px; margin: 0 auto 60px; }
+.ability-total-label { display:flex; justify-content:space-between; color:#888; font-size:14px; margin-bottom:8px; }
+#total-pct-text { color:#fff; font-weight:600; }
+.ability-total-bar { height:8px; background:#1a1a1a; border-radius:4px; overflow:hidden; }
+.ability-total-fill { height:100%; background:linear-gradient(90deg,#7F77DD,#1D9E75); width:0%; transition:width 1.2s ease; border-radius:4px; }
+.ability-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; max-width:1200px; margin:0 auto 80px; }
+.ability-card { background:#111; border:1px solid #222; border-radius:12px; padding:24px; }
+.ability-card.complete { border-color:#1D9E75; }
+.ability-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.ability-name { color:#fff; font-size:15px; font-weight:600; }
+.ability-lv { font-size:13px; font-weight:600; }
+.ability-bar-wrap { height:5px; background:#1a1a1a; border-radius:3px; overflow:hidden; margin-bottom:16px; }
+.ability-bar-fill { height:100%; width:0%; border-radius:3px; transition:width 1s ease; }
+.ability-skills { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.skill { font-size:12px; padding-left:14px; position:relative; color:#888; }
+.skill::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:7px; height:7px; border-radius:50%; background:#333; }
+.skill.done { color:#ccc; }
+.skill.done::before { background:#1D9E75; }
+.ability-next { font-size:11px; color:#555; }
+.complete-badge { color:#1D9E75 !important; font-weight:600; }
+.countdown-wrap { text-align:center; padding:60px 20px; }
+.countdown-label { color:#555; font-size:12px; letter-spacing:3px; text-transform:uppercase; margin-bottom:8px; }
+.countdown-title { color:#fff; font-size:28px; font-weight:700; margin-bottom:40px; }
+.countdown-timer { display:inline-flex; align-items:center; gap:16px; }
+.countdown-unit { text-align:center; }
+.countdown-unit span { display:block; font-size:48px; font-weight:700; color:#fff; line-height:1; min-width:70px; background:#111; border:1px solid #222; border-radius:8px; padding:12px 8px; }
+.countdown-unit small { display:block; color:#555; font-size:11px; margin-top:8px; letter-spacing:2px; }
+.countdown-sep { font-size:36px; color:#333; margin-bottom:20px; }
+</style>
+
+<script>
+(function(){
+  var target = new Date('2026-06-04T00:00:00');
+  function update(){
+    var now = new Date();
+    var diff = target - now;
+    if(diff < 0) diff = 0;
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+    var totalCur = 4+5+4+2+4;
+    var totalMax = 6+5+6+4+5;
+    var pct = Math.round(totalCur/totalMax*100);
+    var fill = document.getElementById('total-fill');
+    var txt = document.getElementById('total-pct-text');
+    if(fill) fill.style.width = pct+'%';
+    if(txt) txt.textContent = pct+'%';
+    document.querySelectorAll('.ability-bar-fill').forEach(function(el){
+      el.style.width = (el.dataset.pct||0)+'%';
+    });
+  }
+  setTimeout(update, 100);
+  setInterval(function(){
+    var now = new Date();
+    var diff = target - now;
+    if(diff < 0) diff = 0;
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+  }, 1000);
+})();
 </script>
 
 </body>
