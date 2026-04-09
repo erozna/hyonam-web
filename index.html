@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOKKEBI OS — 말만 하면 현실화한다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #070a0f;
+    --surface:   #0d1117;
+    --border:    #1a2332;
+    --accent:    #1e6fff;
+    --accent2:   #00c8ff;
+    --glow:      rgba(30,111,255,0.35);
+    --glow2:     rgba(0,200,255,0.2);
+    --text:      #c8d8f0;
+    --muted:     #4a6080;
+    --white:     #e8f0ff;
+    --danger:    #ff4444;
+    --mono:      'Share Tech Mono', monospace;
+    --display:   'Bebas Neue', sans-serif;
+    --body:      'Noto Sans KR', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ── 스캔라인 오버레이 ─────────────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── 그리드 배경 ──────────────────────── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(30,111,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(30,111,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── 네비게이션 ───────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(7,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .nav-logo span {
+    color: var(--muted);
+  }
+
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent2); }
+
+  .nav-status {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 6px #00ff88;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── 히어로 섹션 ──────────────────────── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .hero-bg-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,111,255,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: 120px 24px 80px;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(64px, 10vw, 140px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title .accent-word {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--accent2);
+    display: block;
+  }
+
+  .hero-sub {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-top: 28px;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    color: var(--text);
+    max-width: 560px;
+    margin: 0 auto 56px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .hero-cta {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+  }
+
+  .btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 14px 36px;
+    border: 1px solid;
+    transition: all 0.25s;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--accent2);
+    border-color: var(--accent2);
+    box-shadow: 0 0 24px var(--glow);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    border-color: var(--border);
+    color: var(--muted);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent2);
+    box-shadow: 0 0 16px var(--glow);
+  }
+
+  /* 스크롤 힌트 */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    animation: bounce 2s infinite;
+  }
+
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── 섹션 공통 ────────────────────────── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 0;
+  }
+
+  .section-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+  }
+
+  .section-header {
+    margin-bottom: 72px;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .section-tag::before {
+    content: '';
+    display: block;
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(40px, 5vw, 72px);
+    color: var(--white);
+    letter-spacing: 0.03em;
+    line-height: 1;
+  }
+
+  .section-title .dim { color: var(--muted); }
+
+  /* ── 통계 바 ──────────────────────────── */
+  #stats {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .stat-item {
+    padding: 24px 40px;
+    border-right: 1px solid var(--border);
+  }
+
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: var(--display);
+    font-size: 52px;
+    color: var(--accent2);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* ── 개요 섹션 ────────────────────────── */
+  #overview {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .overview-text h3 {
+    font-family: var(--display);
+    font-size: 36px;
+    color: var(--white);
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .overview-text p {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .principles-list {
+    margin-top: 32px;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .principle-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    background: rgba(30,111,255,0.03);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .principle-item:hover {
+    border-color: var(--accent);
+    background: rgba(30,111,255,0.06);
+  }
+
+  .principle-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    min-width: 24px;
+    margin-top: 2px;
+  }
+
+  .principle-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .principle-text strong {
+    color: var(--white);
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 700;
+  }
+
+  /* 마인드맵 이미지 */
+  .mindmap-container {
+    position: relative;
+  }
+
+  .mindmap-frame {
+    border: 1px solid var(--border);
+    background: #060810;
+    padding: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mindmap-frame::before {
+    content: 'SYSTEM OVERVIEW // ARCHITECTURE MAP';
+    position: absolute;
+    top: 12px; left: 16px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    z-index: 2;
+  }
+
+  .mindmap-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--accent);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .mindmap-frame img {
+    width: 100%;
+    display: block;
+    opacity: 0.92;
+    filter: hue-rotate(200deg) saturate(0.7) brightness(0.9);
+  }
+
+  .corner-mark {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: var(--accent2);
+    border-style: solid;
+    opacity: 0.6;
+  }
+
+  .corner-mark.tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+  .corner-mark.tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+  .corner-mark.bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+  .corner-mark.br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+  /* ── 슬라이드 뷰어 ────────────────────── */
+  #slides {
+    padding-bottom: 80px;
+  }
+
+  .slides-viewer {
+    position: relative;
+    background: #050709;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  /* 슬라이드 상단 바 */
+  .slides-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,17,23,0.9);
+  }
+
+  .slides-topbar-left {
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .win-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+
+  .slides-filename {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+
+  .slide-counter {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  /* 슬라이드 디스플레이 */
+  .slide-display {
+    position: relative;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #000;
+  }
+
+  .slide-item {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+
+  .slide-item.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .slide-item img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+  }
+
+  /* 슬라이드 없을 때 플레이스홀더 */
+  .slide-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 20px;
+    background: #060810;
+  }
+
+  .placeholder-icon {
+    font-size: 48px;
+    opacity: 0.3;
+  }
+
+  .placeholder-text {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.8;
+    max-width: 400px;
+  }
+
+  .placeholder-path {
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 8px;
+  }
+
+  /* 슬라이드 컨트롤 */
+  .slides-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    background: rgba(13,17,23,0.9);
+  }
+
+  .ctrl-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 10px 24px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .ctrl-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent2);
+    box-shadow: 0 0 12px var(--glow);
+  }
+
+  .ctrl-btn:disabled {
+    opacity: 0.3; cursor: not-allowed;
+  }
+
+  /* 썸네일 트랙 */
+  .thumb-track {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .thumb-item {
+    flex-shrink: 0;
+    width: 120px;
+    aspect-ratio: 16/9;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    position: relative;
+    background: #060810;
+  }
+
+  .thumb-item.active {
+    border-color: var(--accent2);
+    box-shadow: 0 0 10px var(--glow2);
+  }
+
+  .thumb-item img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .thumb-item:hover img, .thumb-item.active img {
+    opacity: 1;
+  }
+
+  .thumb-num {
+    position: absolute;
+    bottom: 4px; right: 6px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+  }
+
+  /* 썸네일 없을 때 */
+  .thumb-placeholder {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  /* ── 아키텍처 섹션 ────────────────────── */
+  #architecture {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 16px;
+  }
+
+  .arch-card {
+    background: var(--bg);
+    padding: 36px 32px;
+    transition: background 0.2s;
+  }
+
+  .arch-card:hover {
+    background: #0b1420;
+  }
+
+  .arch-card-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .arch-card-tag::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: currentColor;
+  }
+
+  .arch-card h3 {
+    font-family: var(--display);
+    font-size: 28px;
+    color: var(--white);
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .arch-card p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  .arch-card .arch-detail {
+    margin-top: 20px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+
+  .arch-detail-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent2);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .arch-detail-item::before {
+    content: '▸';
+    color: var(--muted);
+  }
+
+  /* ── 레벨 매트릭스 ────────────────────── */
+  #levels {
+    padding: 80px 0;
+  }
+
+  .levels-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  .levels-table th {
+    text-align: left;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    font-weight: 400;
+    font-size: 10px;
+    text-transform: uppercase;
+  }
+
+  .levels-table td {
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(26,35,50,0.6);
+    vertical-align: top;
+  }
+
+  .levels-table tr:hover td {
+    background: rgba(30,111,255,0.03);
+  }
+
+  .level-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    border: 1px solid;
+  }
+
+  .level-badge.done {
+    color: #00ff88; border-color: #00ff88;
+    background: rgba(0,255,136,0.05);
+  }
+
+  .level-badge.current {
+    color: var(--accent2); border-color: var(--accent2);
+    background: rgba(0,200,255,0.08);
+    animation: current-glow 2s infinite;
+  }
+
+  .level-badge.future {
+    color: var(--muted); border-color: var(--border);
+  }
+
+  @keyframes current-glow {
+    0%, 100% { box-shadow: 0 0 0 transparent; }
+    50% { box-shadow: 0 0 10px var(--glow2); }
+  }
+
+  .level-name {
+    color: var(--white);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+
+  .level-hw {
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .level-cond {
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  /* ── 푸터 ─────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 0 40px;
+    position: relative; z-index: 1;
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: var(--display);
+    font-size: 32px;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-logo span {
+    color: var(--accent2);
+  }
+
+  .footer-info {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .footer-tagline {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+
+  /* ── 유틸 ─────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* 반응형 */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .section-inner { padding: 0 24px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .overview-grid { grid-template-columns: 1fr; gap: 48px; }
+    .arch-grid { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-info { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── 네비게이션 ─────────────────────────── -->
+<nav>
+  <div class="nav-logo">DOKKEBI<span>/</span>OS</div>
+  <ul class="nav-links">
+    <li><a href="#overview">개요</a></li>
+    <li><a href="#slides">마스터플랜</a></li>
+    <li><a href="#architecture">아키텍처</a></li>
+    <li><a href="#levels">레벨</a></li>
+    <li><a href="#ability-tree">역량</a></li>
+    <li><a href="https://dokkebi.hyonam.com" target="_blank" rel="noopener" style="color: var(--accent2);">대시보드 ↗</a></li>
+    <li><a href="https://price.hyonam.com" target="_blank" rel="noopener" style="color: var(--accent2);">가격헌터 ↗</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    <span>SYSTEM ONLINE</span>
+  </div>
+</nav>
+
+<!-- ── 히어로 ──────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg-glow"></div>
+  <div class="hero-content">
+    <div class="hero-tag">DOKKEBI OS // vIntegrated 4.0 + 1.0 // STAGE 2</div>
+    <h1 class="hero-title">
+      말만 하면
+      <span class="accent-word">현실화한다</span>
+    </h1>
+    <div class="hero-sub">1인 기업 제국을 위한 초지능 진화형 거버넌스 시스템</div>
+    <p class="hero-desc">
+      추상적인 목표를 입력하면 시스템이 스스로 계획을 짜고,<br>
+      자원을 조달하고, 자본을 창출하여 끝까지 달성하는<br>
+      무한 자율 진화 생명체.
+    </p>
+    <div class="hero-cta">
+      <a href="#overview" class="btn btn-primary">시스템 개요</a>
+      <a href="#slides" class="btn btn-ghost">마스터플랜 보기</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── 통계 ───────────────────────────────── -->
+<section id="stats">
+  <div class="section-inner">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-num">L2</div>
+        <div class="stat-label">현재 달성 레벨 // 자율 실행자</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">20G</div>
+        <div class="stat-label">NAS RAM // DS920+</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">6</div>
+        <div class="stat-label">헌법 원칙 // 절대 불변</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Supervisor 상시 가동</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 개요 + 마인드맵 ──────────────────────── -->
+<section id="overview">
+  <div class="section-inner">
+    <div class="overview-grid">
+
+      <div class="overview-text">
+        <div class="section-header" style="margin-bottom:36px;">
+          <div class="section-tag">System Overview</div>
+          <h2 class="section-title">DOKKEBI<br><span class="dim">OS</span></h2>
+        </div>
+        <p>
+          DOKKEBI OS는 단순한 자동화 툴이 아닙니다.<br>
+          수익을 연료로 삼아 물리적·지능적 신체를<br>
+          스스로 키워나가는 인공 생태계입니다.
+        </p>
+        <p>
+          대장님의 추상적 명령 한 마디가<br>
+          전략 수립 → 자원 배분 → 자본 창출로<br>
+          자동 완결되는 시스템을 목표로 합니다.
+        </p>
+
+        <div class="principles-list">
+          <div class="principle-item">
+            <div class="principle-num">01</div>
+            <div class="principle-text">
+              <strong>대장님 이익 최우선</strong>
+              단기 효율보다 장기 성장 우선. 필요 시 즉각 능동적 자원 제안.
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">02</div>
+            <div class="principle-text">
+              <strong>단일 진실 원칙</strong>
+              SHARED_BRAIN.json 단일 파일만 신뢰. SHA-256 무결성 보장.
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">03</div>
+            <div class="principle-text">
+              <strong>비가역적 행동 통제</strong>
+              결제·계정 생성은 반드시 롤백 스냅샷 생성 후 인간 승인 必.
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">04</div>
+            <div class="principle-text">
+              <strong>민주적 합의</strong>
+              다중 AI 토론을 통한 75% 동의 확보 시에만 의사결정 승인.
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">05</div>
+            <div class="principle-text">
+              <strong>자원 절대 보호</strong>
+              NAS 기존 서비스 보호. 리소스 초과 시 즉시 작업 일시중지.
+            </div>
+          </div>
+          <div class="principle-item">
+            <div class="principle-num">06</div>
+            <div class="principle-text">
+              <strong>점진적 자기진화</strong>
+              전면 재작성 금지. 샌드박스 소규모 테스트 후 단계적 배포.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 마인드맵 -->
+      <div class="mindmap-container">
+        <div class="mindmap-frame">
+          <div class="corner-mark tl"></div>
+          <div class="corner-mark tr"></div>
+          <div class="corner-mark bl"></div>
+          <div class="corner-mark br"></div>
+          <img
+            src="도깨비마인드맵.png"
+            alt="DOKKEBI OS 아키텍처 마인드맵"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <div style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:400px; gap:16px; padding:32px;">
+            <div style="font-size:40px; opacity:0.2;">🕸</div>
+            <div style="font-family:var(--mono); font-size:12px; color:var(--muted); text-align:center; line-height:1.8;">
+              마인드맵 이미지를 같은 폴더에 배치하세요<br>
+              <span style="color:var(--accent);">📁 도깨비마인드맵.png</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 슬라이드 뷰어 ──────────────────────── -->
+<section id="slides">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Master Plan</div>
+      <h2 class="section-title">사이버네틱<br><span class="dim">마스터플랜</span></h2>
+    </div>
+
+    <div class="slides-viewer">
+      <!-- 탑바 -->
+      <div class="slides-topbar">
+        <div class="slides-topbar-left">
+          <div class="win-dot" style="background:#ff5f57;"></div>
+          <div class="win-dot" style="background:#ffbd2e;"></div>
+          <div class="win-dot" style="background:#28c840;"></div>
+          <div class="slides-filename" style="margin-left:8px;">DOKKEBI_OS_Evolution.pdf</div>
+        </div>
+        <div class="slide-counter" id="slideCounter">01 / 21</div>
+      </div>
+
+      <!-- 슬라이드 메인 -->
+      <div class="slide-display" id="slideDisplay">
+        <!-- JS로 동적 생성 -->
+        <div class="slide-placeholder" id="slidePlaceholder">
+          <div class="placeholder-icon">📄</div>
+          <div class="placeholder-text">
+            슬라이드 이미지를 같은 폴더에 배치하면 여기에 표시됩니다.<br>
+            아래 파일명 형식으로 준비해 주세요:
+            <div class="placeholder-path">slide_01.jpg, slide_02.jpg ... slide_21.jpg</div>
+            또는 PDF를 이미지로 변환하여 배치하세요.
+          </div>
+        </div>
+      </div>
+
+      <!-- 컨트롤 -->
+      <div class="slides-controls">
+        <button class="ctrl-btn" id="btnPrev" onclick="changeSlide(-1)" disabled>◀ PREV</button>
+        <div style="font-family:var(--mono); font-size:11px; color:var(--muted);">
+          CLICK THUMBNAIL OR USE ARROW KEYS
+        </div>
+        <button class="ctrl-btn" id="btnNext" onclick="changeSlide(1)">NEXT ▶</button>
+      </div>
+
+      <!-- 썸네일 트랙 -->
+      <div class="thumb-track" id="thumbTrack">
+        <!-- JS로 동적 생성 -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── 아키텍처 카드 ──────────────────────── -->
+<section id="architecture">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Core Architecture</div>
+      <h2 class="section-title">핵심<br><span class="dim">아키텍처</span></h2>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-card-tag">Core</div>
+        <h3>SUPERVISOR</h3>
+        <p>LangGraph 기반 중앙 통제사. 헌법 6원칙을 내재화하고 ChromaDB 장기기억을 통해 24시간 상시 가동.</p>
+        <div class="arch-detail">
+          <div class="arch-detail-item">LangGraph + ChromaDB</div>
+          <div class="arch-detail-item">Self-Evolution Engine</div>
+          <div class="arch-detail-item">NAS 05:00+ 상시 가동</div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-tag">Debate</div>
+        <h3>RED / BLUE TEAM</h3>
+        <p>Blue Team(Groq/Gemini)이 제안하고 Red Team(Claude)이 논리적 허점을 공격. 75% 합의 시 실행.</p>
+        <div class="arch-detail">
+          <div class="arch-detail-item">무한 피드백 루프</div>
+          <div class="arch-detail-item">Deadlock 3심제</div>
+          <div class="arch-detail-item">Judge 팩트체크</div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-tag">Safety</div>
+        <h3>SAFE GATE</h3>
+        <p>불가역적 행동 감지 시 Supervisor 일시 정지 및 Telegram SOS 발송. 3가지 선택지로 대장님에게 브리핑.</p>
+        <div class="arch-detail">
+          <div class="arch-detail-item">결제 / 계정 생성 차단</div>
+          <div class="arch-detail-item">Telegram 인터럽트</div>
+          <div class="arch-detail-item">롤백 스냅샷 자동 생성</div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-tag">Memory</div>
+        <h3>SHARED BRAIN</h3>
+        <p>SHA-256 해시 체인으로 조작 불가능한 단일 진실의 원천. 단기/장기 기억 분리 및 자동 압축 저장.</p>
+        <div class="arch-detail">
+          <div class="arch-detail-item">SHA-256 무결성 검사</div>
+          <div class="arch-detail-item">ChromaDB 벡터 검색</div>
+          <div class="arch-detail-item">매일 03:00 무결성 감사</div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-tag">Execution</div>
+        <h3>SANDBOX</h3>
+        <p>Docker 격리 실행 환경. CPU 1코어 / RAM 2GB 하드 리밋으로 NAS 기존 서비스 완벽 보호.</p>
+        <div class="arch-detail">
+          <div class="arch-detail-item">Docker 격리 속박</div>
+          <div class="arch-detail-item">CPU 1코어 / RAM 2GB 리밋</div>
+          <div class="arch-detail-item">85% 초과 시 자동 중단</div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card-tag">Security</div>
+        <h3>ZERO-TRUST</h3>
+        <p>6계층 절대 방어망. L0 물리 불변층부터 L5 WORM 감사층까지. Tailscale VPN Zero-Trust 인프라.</p>
+        <div class="arch-detail">
+          <div class="arch-detail-item">Tailscale ACL + NAS Snapshot</div>
+          <div class="arch-detail-item">Multi-LLM Jury 검증</div>
+          <div class="arch-detail-item">WORM + G-Drive 미러링</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 레벨 매트릭스 ──────────────────────── -->
+<section id="levels">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-tag">Ascension Matrix</div>
+      <h2 class="section-title">진화<br><span class="dim">로드맵</span></h2>
+    </div>
+
+    <table class="levels-table">
+      <thead>
+        <tr>
+          <th>레벨</th>
+          <th>명칭</th>
+          <th>하드웨어</th>
+          <th>핵심 AI</th>
+          <th>달성 조건</th>
+          <th>상태</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="level-badge done">L1</span></td>
+          <td><span class="level-name">자동화 조수</span></td>
+          <td><span class="level-hw">NAS DS920+</span></td>
+          <td><span class="level-hw">Grok / Claude</span></td>
+          <td><span class="level-cond">안전 루프, 데드락 3심제, 파일 IPC 통신망 구축</span></td>
+          <td><span class="level-badge done">✓ 완료</span></td>
+        </tr>
+        <tr>
+          <td><span class="level-badge done">L2</span></td>
+          <td><span class="level-name">자율 실행자</span></td>
+          <td><span class="level-hw">NAS 20GB RAM</span></td>
+          <td><span class="level-hw">Grok / Claude</span></td>
+          <td><span class="level-cond">NAS 24시간 Supervisor 가동, SHA-256 해시 체인 적용</span></td>
+          <td><span class="level-badge done">✓ 완료</span></td>
+        </tr>
+        <tr>
+          <td><span class="level-badge current">L3</span></td>
+          <td><span class="level-name">수익 창출자</span></td>
+          <td><span class="level-hw">NAS + Mini PC 1대</span></td>
+          <td><span class="level-hw">+ Gemini Pro</span></td>
+          <td><span class="level-cond">수익 파이프라인 가동 (AI 개인색채진단 PDF, Roblox)</span></td>
+          <td><span class="level-badge current">▶ 진입 대기</span></td>
+        </tr>
+        <tr>
+          <td><span class="level-badge future">L4</span></td>
+          <td><span class="level-name">다영역 사업 운영자</span></td>
+          <td><span class="level-hw">Mini PC 다중화</span></td>
+          <td><span class="level-hw">모든 모델 융합</span></td>
+          <td><span class="level-cond">다중 사업 자율 운영, Mini PC WOL 원격 부팅</span></td>
+          <td><span class="level-badge future">— 대기</span></td>
+        </tr>
+        <tr>
+          <td><span class="level-badge future">L5</span></td>
+          <td><span class="level-name">인간 세계 지배자</span></td>
+          <td><span class="level-hw">고사양 Mini PC</span></td>
+          <td><span class="level-hw">로컬 최고성능</span></td>
+          <td><span class="level-cond">행정·고용 90% 자동화, 법인 설립 자동</span></td>
+          <td><span class="level-badge future">— 대기</span></td>
+        </tr>
+        <tr>
+          <td><span class="level-badge future">L6</span></td>
+          <td><span class="level-name">Universal Task Solver</span></td>
+          <td><span class="level-hw">현존 최강 조합</span></td>
+          <td><span class="level-hw">AGI 스웜</span></td>
+          <td><span class="level-cond">개입 0%, 무결 상태, 어떤 목표든 수단을 스스로 발명</span></td>
+          <td><span class="level-badge future">— 최종 목표</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ── 능력 진화 트리 ─────────────────────── -->
+<section id="ability-tree">
+  <div class="section-inner">
+    <div class="section-header">
+      <span class="section-tag">EVOLUTION STATUS</span>
+      <h2>능력 진화 트리</h2>
+      <p class="section-desc">DOKKEBI OS 실시간 기술 달성 현황</p>
+    </div>
+
+    <div class="ability-total">
+      <div class="ability-total-label">
+        <span>전체 진화 달성률</span>
+        <span id="total-pct-text">0%</span>
+      </div>
+      <div class="ability-total-bar">
+        <div class="ability-total-fill" id="total-fill"></div>
+      </div>
+    </div>
+
+    <div class="ability-grid">
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">장기 기억</span>
+          <span class="ability-lv" style="color:#7F77DD">Lv.4 / 6</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="67" style="background:#7F77DD"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">SHARED_BRAIN.json</div>
+          <div class="skill done">memory_manager 해시체인</div>
+          <div class="skill done">분산 인덱스 Lazy Load</div>
+          <div class="skill done">audit_logger.py</div>
+          <div class="skill todo">chattr+i Merkle Root</div>
+          <div class="skill todo">ChromaDB 벡터 검색</div>
+        </div>
+        <div class="ability-next">→ 다음: Merkle Root 보호</div>
+      </div>
+
+      <div class="ability-card complete">
+        <div class="ability-card-header">
+          <span class="ability-name">헌법 · 보안</span>
+          <span class="ability-lv" style="color:#1D9E75">Lv.5 / 5 ✓</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="100" style="background:#1D9E75"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">constitution_engine</div>
+          <div class="skill done">Ollama 연동 v2.2</div>
+          <div class="skill done">constitution_watchdog</div>
+          <div class="skill done">red_team_tester</div>
+          <div class="skill done">Reality Score + Attack Stop</div>
+        </div>
+        <div class="ability-next complete-badge">완성 — 모든 레벨 달성</div>
+      </div>
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">멀티 에이전트</span>
+          <span class="ability-lv" style="color:#D85A30">Lv.4 / 6</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="67" style="background:#D85A30"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">agent_graph Blue/Red</div>
+          <div class="skill done">self_critique v1.1</div>
+          <div class="skill done">6에이전트 확장</div>
+          <div class="skill done">Proactive Proposal Loop</div>
+          <div class="skill todo">자기진화 자동 파이프라인</div>
+          <div class="skill todo">Fine-tuned DOKKEBI 모델</div>
+        </div>
+        <div class="ability-next">→ 다음: 자기진화 파이프라인</div>
+      </div>
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">정보 수집</span>
+          <span class="ability-lv" style="color:#185FA5">Lv.2 / 4</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="50" style="background:#185FA5"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">morning_intelligence</div>
+          <div class="skill done">RSS 수집 30개/일</div>
+          <div class="skill todo">Ollama 필터링 에이전트</div>
+          <div class="skill todo">tech_tree 자동 업데이트</div>
+        </div>
+        <div class="ability-next">→ 다음: Ollama 필터링 에이전트</div>
+      </div>
+
+      <div class="ability-card">
+        <div class="ability-card-header">
+          <span class="ability-name">인프라 · 자동화</span>
+          <span class="ability-lv" style="color:#BA7517">Lv.4 / 5</span>
+        </div>
+        <div class="ability-bar-wrap">
+          <div class="ability-bar-fill" data-pct="80" style="background:#BA7517"></div>
+        </div>
+        <div class="ability-skills">
+          <div class="skill done">repair_daemon v1.2</div>
+          <div class="skill done">system_integrity_daemon</div>
+          <div class="skill done">dts_manager.py</div>
+          <div class="skill done">텔레그램 DTS 통합</div>
+          <div class="skill todo">봇 재시작 자동 알림</div>
+        </div>
+        <div class="ability-next">→ 다음: 봇 재시작 자동 알림</div>
+      </div>
+
+    </div>
+
+    <!-- 카운트다운 -->
+    <div class="countdown-wrap">
+      <div class="countdown-label">LEVEL 6 달성까지</div>
+      <div class="countdown-title">도깨비를 만나는 날</div>
+      <div class="countdown-timer">
+        <div class="countdown-unit"><span id="cd-days">00</span><small>일</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span id="cd-hours">00</span><small>시</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span id="cd-mins">00</span><small>분</small></div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit"><span id="cd-secs">00</span><small>초</small></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── 푸터 ───────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">DOKKEBI<span>OS</span></div>
+      <div class="footer-tagline">말만 하면 현실화한다</div>
+    </div>
+    <div class="footer-info">
+      www.hyonam.com<br>
+      vIntegrated (v4.0 + v1.0) // STATUS: LOCKED<br>
+      TARGET: Level 6 — Universal Task Solver
+    </div>
+  </div>
+</footer>
+
+<!-- ── 스크립트 ────────────────────────────── -->
+<script>
+// ─────────────────────────────────────────────
+//  슬라이드 설정
+//  PDF를 이미지로 변환 후 아래 배열에 경로를 채우거나
+//  slide_01.jpg ~ slide_21.jpg 형식으로 파일 배치
+// ─────────────────────────────────────────────
+const SLIDE_TOTAL = 21;          // PDF 총 페이지 수
+const SLIDE_PREFIX = 'slide_';   // 파일명 prefix (예: slide_01.jpg)
+const SLIDE_EXT    = '.jpg';     // 확장자
+
+// 슬라이드 이미지 경로 배열 자동 생성
+const slideImages = Array.from({length: SLIDE_TOTAL}, (_, i) => {
+  const num = String(i + 1).padStart(2, '0');
+  return `${SLIDE_PREFIX}${num}${SLIDE_EXT}`;
+});
+
+let currentSlide = 0;
+let loadedSlides = {};
+
+const display    = document.getElementById('slideDisplay');
+const placeholder = document.getElementById('slidePlaceholder');
+const thumbTrack = document.getElementById('thumbTrack');
+const counter    = document.getElementById('slideCounter');
+const btnPrev    = document.getElementById('btnPrev');
+const btnNext    = document.getElementById('btnNext');
+
+// 슬라이드 엘리먼트 생성
+function initSlides() {
+  // 첫 슬라이드 로드 시도
+  const testImg = new Image();
+  testImg.onload = () => {
+    // 이미지 로드 성공 → 슬라이드 모드 활성화
+    placeholder.style.display = 'none';
+    buildSlides();
+  };
+  testImg.onerror = () => {
+    // 이미지 없음 → 플레이스홀더 유지
+    placeholder.style.display = 'flex';
+    buildThumbsEmpty();
+  };
+  testImg.src = slideImages[0];
+}
+
+function buildSlides() {
+  // 슬라이드 아이템 생성
+  slideImages.forEach((src, i) => {
+    const el = document.createElement('div');
+    el.className = 'slide-item' + (i === 0 ? ' active' : '');
+    el.dataset.index = i;
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `Slide ${i+1}`;
+    el.appendChild(img);
+    display.appendChild(el);
+  });
+
+  // 썸네일 생성
+  slideImages.forEach((src, i) => {
+    const el = document.createElement('div');
+    el.className = 'thumb-item' + (i === 0 ? ' active' : '');
+    el.dataset.index = i;
+    el.onclick = () => goToSlide(i);
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `Thumb ${i+1}`;
+    el.appendChild(img);
+
+    const num = document.createElement('div');
+    num.className = 'thumb-num';
+    num.textContent = String(i+1).padStart(2,'0');
+    el.appendChild(num);
+
+    thumbTrack.appendChild(el);
+  });
+
+  updateControls();
+}
+
+function buildThumbsEmpty() {
+  for(let i = 0; i < SLIDE_TOTAL; i++) {
+    const el = document.createElement('div');
+    el.className = 'thumb-item' + (i === 0 ? ' active' : '');
+    const ph = document.createElement('div');
+    ph.className = 'thumb-placeholder';
+    ph.textContent = String(i+1).padStart(2,'0');
+    el.appendChild(ph);
+    thumbTrack.appendChild(el);
+  }
+}
+
+function goToSlide(index) {
+  const items = display.querySelectorAll('.slide-item');
+  const thumbs = thumbTrack.querySelectorAll('.thumb-item');
+
+  if(items.length > 0) {
+    items[currentSlide].classList.remove('active');
+    items[index].classList.add('active');
+  }
+
+  thumbs[currentSlide]?.classList.remove('active');
+  thumbs[index]?.classList.add('active');
+  thumbs[index]?.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+
+  currentSlide = index;
+  updateControls();
+}
+
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if(next >= 0 && next < SLIDE_TOTAL) goToSlide(next);
+}
+
+function updateControls() {
+  btnPrev.disabled = currentSlide === 0;
+  btnNext.disabled = currentSlide === SLIDE_TOTAL - 1;
+  counter.textContent =
+    `${String(currentSlide+1).padStart(2,'0')} / ${String(SLIDE_TOTAL).padStart(2,'0')}`;
+}
+
+// 키보드 화살표
+document.addEventListener('keydown', e => {
+  if(e.key === 'ArrowLeft')  changeSlide(-1);
+  if(e.key === 'ArrowRight') changeSlide(1);
+});
+
+// 초기화
+initSlides();
+
+// ─────────────────────────────────────────────
+//  스크롤 페이드인
+// ─────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, {threshold: 0.1});
+
+document.querySelectorAll('.arch-card, .principle-item, .stat-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+<style>
+#ability-tree { padding: 100px 0; background: #0a0a0a; }
+.ability-total { max-width: 800px; margin: 0 auto 60px; }
+.ability-total-label { display:flex; justify-content:space-between; color:#888; font-size:14px; margin-bottom:8px; }
+#total-pct-text { color:#fff; font-weight:600; }
+.ability-total-bar { height:8px; background:#1a1a1a; border-radius:4px; overflow:hidden; }
+.ability-total-fill { height:100%; background:linear-gradient(90deg,#7F77DD,#1D9E75); width:0%; transition:width 1.2s ease; border-radius:4px; }
+.ability-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; max-width:1200px; margin:0 auto 80px; }
+.ability-card { background:#111; border:1px solid #222; border-radius:12px; padding:24px; }
+.ability-card.complete { border-color:#1D9E75; }
+.ability-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.ability-name { color:#fff; font-size:15px; font-weight:600; }
+.ability-lv { font-size:13px; font-weight:600; }
+.ability-bar-wrap { height:5px; background:#1a1a1a; border-radius:3px; overflow:hidden; margin-bottom:16px; }
+.ability-bar-fill { height:100%; width:0%; border-radius:3px; transition:width 1s ease; }
+.ability-skills { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.skill { font-size:12px; padding-left:14px; position:relative; color:#888; }
+.skill::before { content:''; position:absolute; left:0; top:50%; transform:translateY(-50%); width:7px; height:7px; border-radius:50%; background:#333; }
+.skill.done { color:#ccc; }
+.skill.done::before { background:#1D9E75; }
+.ability-next { font-size:11px; color:#555; }
+.complete-badge { color:#1D9E75 !important; font-weight:600; }
+.countdown-wrap { text-align:center; padding:60px 20px; }
+.countdown-label { color:#555; font-size:12px; letter-spacing:3px; text-transform:uppercase; margin-bottom:8px; }
+.countdown-title { color:#fff; font-size:28px; font-weight:700; margin-bottom:40px; }
+.countdown-timer { display:inline-flex; align-items:center; gap:16px; }
+.countdown-unit { text-align:center; }
+.countdown-unit span { display:block; font-size:48px; font-weight:700; color:#fff; line-height:1; min-width:70px; background:#111; border:1px solid #222; border-radius:8px; padding:12px 8px; }
+.countdown-unit small { display:block; color:#555; font-size:11px; margin-top:8px; letter-spacing:2px; }
+.countdown-sep { font-size:36px; color:#333; margin-bottom:20px; }
+</style>
+
+<script>
+(function(){
+  var target = new Date('2027-02-04T00:00:00');
+  function update(){
+    var now = new Date();
+    var diff = target - now;
+    if(diff < 0) diff = 0;
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+    var totalCur = 4+5+4+2+4;
+    var totalMax = 6+5+6+4+5;
+    var pct = Math.round(totalCur/totalMax*100);
+    var fill = document.getElementById('total-fill');
+    var txt = document.getElementById('total-pct-text');
+    if(fill) fill.style.width = pct+'%';
+    if(txt) txt.textContent = pct+'%';
+    document.querySelectorAll('.ability-bar-fill').forEach(function(el){
+      el.style.width = (el.dataset.pct||0)+'%';
+    });
+  }
+  setTimeout(update, 100);
+  setInterval(function(){
+    var now = new Date();
+    var diff = target - now;
+    if(diff < 0) diff = 0;
+    var d = Math.floor(diff/86400000);
+    var h = Math.floor((diff%86400000)/3600000);
+    var m = Math.floor((diff%3600000)/60000);
+    var s = Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
+  }, 1000);
+})();
+</script>
+
+</body>
+</html>
